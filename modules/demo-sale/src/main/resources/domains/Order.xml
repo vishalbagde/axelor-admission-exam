@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<domain-models xmlns="http://axelor.com/xml/ns/domain-models"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://axelor.com/xml/ns/domain-models http://axelor.com/xml/ns/domain-models/domain-models_5.3.xsd">
+
+  <module name="sale" package="com.axelor.sale.db"/>
+
+  <sequence name="sale.order.seq" initial="1" increment="1" padding="5" prefix="SO"/>
+
+  <enum name="OrderStatus">
+    <item name="DRAFT" value="draft" />
+    <item name="OPEN" value="open" />
+    <item name="CLOSED" value="closed" />
+    <item name="CANCELED" value="canceled" />
+  </enum>
+
+  <entity name="Order" sequential="true">
+    <many-to-one name="customer" ref="com.axelor.contact.db.Contact" required="true"/>
+    <string name="name" sequence="sale.order.seq" readonly="true" />
+    <enum name="status" ref="OrderStatus"></enum>
+    <date name="orderDate" required="true" />
+    <date name="confirmDate" />
+    <boolean name="confirmed" />
+    <decimal name="amount" precision="20" scale="4"/>
+    <decimal name="taxAmount" precision="20" scale="4"/>
+    <decimal name="totalAmount" precision="20" scale="2"/>
+    <string name="notes" large="true"/>
+    <one-to-many name="items" ref="OrderLine" mappedBy="order" orderBy="price"/>
+    <finder-method name="findByCustomer" using="long:id" filter="self.customer.id = :id" all="true"/>
+    <finder-method name="findByCustomer" using="String:email" filter="self.customer.email = :email" all="true"/>
+
+    <track>
+      <field name="name" />
+      <field name="orderDate" on="CREATE" />
+      <field name="customer" />
+      <field name="confirmed" on="UPDATE" />
+      <field name="confirmDate" on="UPDATE" if="confirmed" />
+      <field name="totalAmount" />
+      <message if="true" on="CREATE">Order created</message>
+      <message if="confirmed" on="UPDATE">Order confirmed</message>
+      <message if="status == OrderStatus.DRAFT" tag="important">Draft</message>
+      <message if="confirmed" tag="success">Confirmed</message>
+      <message if="confirmed &amp;&amp; totalAmount &gt;= 1000" tag="important" fields="confirmed">Important</message>
+    </track>
+
+  </entity>
+
+</domain-models>

@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.3.xsd">
+
+  <grid name="order-grid" title="Orders" model="com.axelor.sale.db.Order">
+    <field name="name"/>
+    <field name="customer"/>
+    <field name="orderDate"/>
+    <field name="status"/>
+    <field name="totalAmount"/>
+  </grid>
+
+  <form name="order-form" title="Order" model="com.axelor.sale.db.Order"
+    onNew="default-order-record"
+    onSave="check-order-values,action-sale-order-validate">
+    <toolbar>
+      <button name="btnPrint" title="Print" showTitle="false" showIf="id" onClick="print.sale.order" icon="fa-print" />
+    </toolbar>
+    <panel title="Order Details">
+      <field name="name"/>
+      <field name="status" widget="nav-select" readonly="true"/>
+      <field name="customer" readonlyIf="confirmed" form-view="contact-form" grid-view="contact-grid"/>
+      <field name="confirmed" widget="boolean-switch" onChange="com.axelor.sale.web.SaleOrderController:onConfirm"/>
+      <field name="orderDate" readonlyIf="confirmed"/>
+      <field name="confirmDate" requiredIf="confirmed" validIf="confirmDate == null || $moment(confirmDate) >= $moment(orderDate)"/>
+    </panel>
+    <panel-tabs>
+      <panel-related field="items" editable="true" readonlyIf="confirmed"
+        orderBy="sequence" canMove="true"
+        onChange="com.axelor.sale.web.SaleOrderController:calculate">
+        <field name="product"/>
+        <field name="price"/>
+        <field name="quantity"/>
+        <field name="taxes"/>
+      </panel-related>
+      <panel title="Notes">
+        <field name="notes" showTitle="false" colSpan="12" widget="html" />
+      </panel>
+    </panel-tabs>
+    <panel>
+      <panel colSpan="4" itemSpan="12">
+        <button name="totalAmount" onClick="check-order-dates,com.axelor.sale.web.SaleOrderController:calculate,save" title="Total amount" icon="fa-bar-chart" widget="info-button" css="btn-primary"/>
+        <button name="btnExport" title="Export" showIf="id" onClick="export.sale.order"/>
+      </panel>
+      <panel colSpan="8" css="order-subtotal" readonly="true">
+        <field name="totalAmount" showTitle="false" colSpan="12">
+          <viewer depends="amount,taxAmount"><![CDATA[
+          <dl class="dl-horizontal">
+            <dt x-translate>Amount</dt>
+            <dd>{{record.amount}}</dd>
+            <dt x-translate>Tax amount</dt>
+            <dd>{{record.taxAmount}}</dd>
+            <dt class="order-subtotal-total" x-translate>Total amount</dt>
+            <dd class="order-subtotal-total">{{record.totalAmount}}</dd>
+          </dl>
+          ]]></viewer>
+        </field>
+      </panel>
+    </panel>
+    <panel-mail>
+      <mail-messages limit="4" />
+      <mail-followers />
+    </panel-mail>
+  </form>
+
+  <calendar name="sales-timeline" title="Sales Timeline" model="com.axelor.sale.db.Order" editable="false"
+    eventStart="orderDate"
+    eventStop="confirmDate"
+    eventLength="8"
+    colorBy="customer">
+    <field name="name" />
+  </calendar>
+
+  <!-- dashboard box with custom template -->
+  <custom name="report-sales-today" title="Sales today" css="report-box">
+    <dataset type="rpc">com.axelor.sale.web.SaleOrderController:reportToday</dataset>
+    <template>
+    <![CDATA[
+    <div class="report-data">
+      <h1>{{first.total}}</h1>
+      <small>Total sale</small>
+      <div class="report-percent font-bold pull-right" ng-class="{'text-error': first.down, 'text-success': !first.down}">{{first.percent | number:2}}% <i class="fa" ng-class="{'fa-level-down': first.down, 'fa-level-up': !first.down}"></i></div>
+      <div class="report-tags"><span class="label label-important">Today</span></div>
+    </div>
+    ]]>
+    </template>
+  </custom>
+
+  <!-- dashboard box with custom template -->
+  <custom name="report-sales-month" title="Sales this month" css="report-box">
+    <dataset type="rpc">com.axelor.sale.web.SaleOrderController:reportMonthly</dataset>
+    <template>
+    <![CDATA[
+    <div class="report-data">
+      <h1>{{first.total}}</h1>
+      <small>Total sale</small>
+      <div class="report-percent font-bold pull-right" ng-class="{'text-error': first.down, 'text-success': !first.down}">{{first.percent | number:2}}% <i class="fa" ng-class="{'fa-level-down': first.down, 'fa-level-up': !first.down}"></i></div>
+      <div class="report-tags"><span class="label label-success">Monthly</span></div>
+    </div>
+    ]]>
+    </template>
+  </custom>
+
+  <!-- dashboard data table with predefined template tag -->
+  <custom name="report-sales-list" title="Some Title">
+    <field name="total" type="decimal" x-scale="2" />
+    <dataset type="jpql" limit="10">
+    <![CDATA[
+    SELECT self.name AS name, c.fullName AS customer, self.totalAmount AS total FROM Order self
+    LEFT join self.customer AS c
+    WHERE YEAR(self.orderDate) = YEAR(current_date)
+    AND MONTH(self.orderDate) = MONTH(current_date)
+    ]]>
+    </dataset>
+    <template>
+    <![CDATA[
+    <report-table data='data' columns='name,customer,total' sums='total'></report-table>
+    ]]>
+    </template>
+  </custom>
+
+  <search-filters name="filter-sales" model="com.axelor.sale.db.Order" title="Filter Sale Orders">
+    <filter title="Confirmed">
+      <domain>self.confirmed = true</domain>
+    </filter>
+    <filter title="Not Confirmed">
+      <domain>self.confirmed = false OR self.confirmed is null</domain>
+    </filter>
+    <filter title="High Value (>= 1000)">
+      <domain>self.totalAmount &gt;= 1000</domain>
+    </filter>
+  </search-filters>
+
+  <action-record name="default-order-record" model="com.axelor.sale.db.Order">
+    <field name="customer" expr="action:default-customer-record" if="!(__ref__ instanceof Contact)"/>
+    <field name="customer" expr="eval: __ref__" if="__ref__ instanceof Contact"/>
+    <field name="orderDate" expr="eval: __date__"/>
+    <field name="status" expr="DRAFT" />
+    <field name="items" expr="action:default-orderline-record"/>
+  </action-record>
+
+  <action-record name="default-orderline-record" model="com.axelor.sale.db.OrderLine">
+    <field name="product" expr="action:default-product-record"/>
+    <field name="price" expr="100.0"/>
+    <field name="quantity" expr="1"/>
+    <field name="taxes" expr="action:default-tax-record"/>
+  </action-record>
+
+  <action-record name="default-product-record"
+    model="com.axelor.sale.db.Product"
+    search="('self.code = ?1', 'PC1')">
+    <field name="code" expr="PC1"/>
+    <field name="name" expr="Personal Computer"/>
+  </action-record>
+
+  <action-record name="default-tax-record"
+    model="com.axelor.sale.db.Tax"
+    search="('self.code LIKE ?1', 'VAT%')">
+    <field name="code" expr="VAT12"/>
+    <field name="name" expr="Vat 12%"/>
+    <field name="rate" expr="0.12"/>
+  </action-record>
+
+  <action-record name="default-customer-record"
+    model="com.axelor.contact.db.Contact"
+    search="self.emails[].email = 'john.smith@gmail.com'">
+    <field name="title" expr="action:default-title-record"/>
+    <field name="firstName" expr="John"/>
+    <field name="lastName" expr="Smith"/>
+    <field name="emails" expr="eval: [__repo__(Email).create([email: 'john.smith@gmail.com'])]"/>
+    <field name="phones" expr="eval: [__repo__(Phone).create([phone: '+330183610313'])]"/>
+  </action-record>
+
+  <action-record name="default-title-record"
+    model="com.axelor.contact.db.Title"
+    search="('self.code = ?1', 'mr')">
+    <field name="code" expr="mr"/>
+    <field name="name" expr="Mr."/>
+  </action-record>
+
+  <action-validate name="action-sale-order-validate">
+    <error message="Order Date is in future." if="confirmed &amp;&amp; orderDate &gt; __date__"/>
+    <alert message="No Sale Order Items. Would you like to continue?" if="confirmed &amp;&amp; !items"/>
+  </action-validate>
+
+  <action-condition name="check-order-dates">
+    <check field="orderDate"/>
+    <check field="confirmDate" if="confirmDate &amp;&amp; confirmDate &lt; orderDate" error="Confirm date should be after order date."/>
+  </action-condition>
+
+  <action-condition name="check-order-values">
+    <check field="amount" if="confirmed &amp;&amp; !amount"/>
+    <check field="taxAmount" if="confirmed &amp;&amp; !taxAmount"/>
+    <check field="totalAmount" if="confirmed &amp;&amp; !totalAmount"/>
+  </action-condition>
+
+  <action-export name="export.sale.order" output="${name}/${date}${time}" download="true">
+    <export name="${name}.xml" template="data-export/export-sale-order.st"/>
+  </action-export>
+
+  <action-report name="print.sale.order"
+    design="order.rptdesign"
+    output="so-${date}${time}"
+    format="pdf">
+    <param name="orderId" expr="eval: id"/>
+  </action-report>
+
+</object-views>

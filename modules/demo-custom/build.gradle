@@ -1,0 +1,18 @@
+apply plugin: 'com.axelor.app-module'
+
+axelor {
+  title = "Axelor :: Custom"
+
+  description = """\
+Dynamic module demo.
+
+This is a demo module to provide quick demonstration of removable modules.
+"""
+
+  removable = true
+}
+
+dependencies {
+  api project(":modules:demo-contact")
+  api project(":modules:demo-sale")
+}

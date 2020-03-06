@@ -1,0 +1,9 @@
+apply plugin: 'com.axelor.app-module'
+
+axelor {
+  title = "Axelor :: Sale"
+}
+
+dependencies {
+  api project(':modules:demo-contact')
+}

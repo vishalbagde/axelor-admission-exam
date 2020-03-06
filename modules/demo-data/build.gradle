@@ -1,0 +1,10 @@
+apply plugin: 'com.axelor.app-module'
+
+axelor {
+  title = "Axelor :: Data Tests"
+}
+
+dependencies {
+  api project(":modules:demo-contact")
+  api project(":modules:demo-sale")
+}

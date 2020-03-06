@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.2.xsd">
+
+	<selection name="admission.admission.entry.status.select">
+		<option value="1">Draft</option>
+		<option value="2">Confirmed</option>
+		<option value="3">Admitted</option>
+		<option value="4">Cancelled</option>
+	</selection>
+
+	<grid name="admission-entry-grid" title="Admission Entry"
+		model="com.axelor.admission.db.AdmissionEntry">
+		<field name="candidate" />
+		<field name="registrationDate" />
+		<field name="merit" />
+		<field name="collegeSelected" />
+		<field name="statusSelect">
+			<hilite if="statusSelect == 1" color="default" />
+			<hilite if="statusSelect == 2" color="primary" />
+			<hilite if="statusSelect == 3" color="success" />
+			<hilite if="statusSelect == 4" color="danger" />
+		</field>
+	</grid>
+
+	<form name="admission-entry-form" title="Admission Entry"
+		model="com.axelor.admission.db.AdmissionEntry" onNew="action-attrs-on-new-addmission-antry-set-date">
+
+		<panel>
+			<field name="statusSelect" widget="navSelect" colSpan="12" />
+		</panel>
+
+		<panel name="mainPanel">
+			<field name="candidate" />
+			<field name="registrationDate" />
+			<field name="faculty" />
+			<field name="merit" />
+			<field name="validationDate" />
+			<field name="collegeSelected" />
+		</panel>
+
+		<panel-related field="collegeList" form-view="college-entry-form" />
+
+		<panel sidebar="true">
+			<button name="draftBtn" title="Draft" hidden="true"
+				showIf="statusSelect == 4" onClick="action-admission-method-change-status-draft,save"
+				css="btn-primary" />
+
+			<button name="confirmedBtn" title="Confirm" hidden="true"
+				showIf="statusSelect == 1" onClick="action-admission-method-change-status-confirmed,save"
+				css="btn-warning" />
+
+			<button name="confirmedBtn" title="Admitted" hidden="true"
+				readonly="true" showIf="statusSelect == 3" onClick="" css="btn-success" />
+
+			<button name="cancelbtn" title="Cancel" hidden="true"
+				hideIf="statusSelect == 4" readonlyIf="collegeSelected"
+				onClick="action-admission-method-change-status-cancelled" css="btn-danger" />
+
+		</panel>
+	</form>
+
+
+	<action-attrs name="action-attrs-on-new-addmission-entry-set-date">
+		<attribute name="value" for="registrationDate" expr="eval:__date__" />
+	</action-attrs>
+
+	<action-attrs name="action-attrs-on-new-addmission-entry-set-status">
+		<attribute name="value" for="statusSelect" expr="1" />
+	</action-attrs>
+
+	<action-attrs name="action-admission-method-change-status-draft">
+		<attribute name="value" for="statusSelect" expr="1" />
+	</action-attrs>
+
+	<action-attrs name="action-admission-method-change-status-confirmed">
+		<attribute name="value" for="statusSelect" expr="2" />
+	</action-attrs>
+
+	<action-attrs name="action-admission-method-change-status-admitted">
+		<attribute name="value" for="statusSelect" expr="3" />
+	</action-attrs>
+
+	<action-attrs name="action-admission-method-change-status-cancelled">
+		<attribute name="value" for="statusSelect" expr="4" />
+	</action-attrs>
+
+</object-views>

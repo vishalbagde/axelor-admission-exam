@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<domain-models xmlns="http://axelor.com/xml/ns/domain-models"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://axelor.com/xml/ns/domain-models http://axelor.com/xml/ns/domain-models/domain-models_5.3.xsd">
+
+  <module name="contact" package="com.axelor.contact.db"/>
+
+  <entity name="Company" cacheable="true">
+    <string name="code" required="true" unique="true" min="2"/>
+    <string name="name" required="true" unique="true" min="2"/>
+    <many-to-one name="parent" ref="Company"/>
+    <one-to-many name="employees" ref="Contact" mappedBy="company" />
+    <string name="notes" multiline="true"/>
+  </entity>
+
+</domain-models>

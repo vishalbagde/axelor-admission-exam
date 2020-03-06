@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.3.xsd">
+
+  <chart name="chart.sales.per.month" title="Sales per month">
+    <dataset type="jpql">
+    <![CDATA[
+    SELECT
+        SUM(self.totalAmount) AS amount,
+        MONTH(self.orderDate) AS month,
+        _customer.fullName AS customer
+    FROM
+        Order self
+    LEFT JOIN
+        self.customer AS _customer
+    WHERE
+        YEAR(self.orderDate) = YEAR(current_date)
+    GROUP BY
+        _customer.fullName,
+        MONTH(self.orderDate)
+    ORDER BY
+        month
+    ]]>
+    </dataset>
+    <category key="month" type="month"/>
+    <series key="amount" groupBy="customer" type="bar"/>
+  </chart>
+
+  <chart name="chart.sales.per.month.pie" title="Sales per customer">
+    <dataset type="jpql">
+    <![CDATA[
+    SELECT
+        SUM(self.totalAmount) AS amount,
+        _customer.fullName AS customer
+    FROM
+        Order self
+    LEFT JOIN
+        self.customer AS _customer
+    WHERE
+        YEAR(self.orderDate) = YEAR(current_date)
+    GROUP BY
+        _customer.fullName
+    ]]>
+    </dataset>
+    <category key="customer"/>
+    <series key="amount" type="pie"/>
+  </chart>
+
+  <chart name="chart.sales.by.customer" title="Sales by customer">
+    <dataset type="sql">
+    <![CDATA[
+    SELECT
+        SUM(o.total_amount) AS amount,
+        EXTRACT(month from o.order_date) AS month,
+        c.full_name AS customer
+    FROM
+        sale_order o
+    LEFT JOIN
+        contact_contact c ON o.customer = c.id
+    WHERE
+        EXTRACT(year from o.order_date) = EXTRACT(year from current_date) AND c.id = :id
+    GROUP BY
+        c.full_name,
+        month
+    ORDER BY
+        month
+    ]]>
+    </dataset>
+    <category key="month" type="month"/>
+    <series key="amount" groupBy="customer" type="bar"/>
+  </chart>
+
+  <chart name="chart.sales.gauge" title="Sales Gauge (this month)">
+    <dataset type="jpql">
+    <![CDATA[
+    SELECT
+        COUNT(self.id) AS total,
+        MONTH(self.orderDate) AS month
+    FROM
+        Order self
+    WHERE
+        MONTH(self.orderDate) = MONTH(current_date)
+    GROUP BY
+        MONTH(self.orderDate)
+    ]]>
+    </dataset>
+    <category key="month" type="month"/>
+    <series key="total" type="gauge"/>
+    <config name="min" value="0"/>
+    <config name="max" value="10"/>
+  </chart>
+
+</object-views>

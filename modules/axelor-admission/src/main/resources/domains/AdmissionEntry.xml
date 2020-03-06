@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<domain-models xmlns="http://axelor.com/xml/ns/domain-models"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://axelor.com/xml/ns/domain-models http://axelor.com/xml/ns/domain-models/domain-models_5.2.xsd">
+
+	<module name="admission" package="com.axelor.admission.db" />
+
+	<entity name="AdmissionEntry">
+		<many-to-one name="candidate" title="Candidate"
+			ref="com.axelor.contact.db.Contact" required="true" unique="true" />
+		<date name="registrationDate" title="Registration Date" />
+		<many-to-one name="faculty" title="Faculty"
+			ref="com.axelor.admission.db.Faculty" required="true" />
+		<decimal name="merit" title="Merit" min="0" max="100" />
+		<one-to-many name="collegeList" title="Colleges"
+			ref="com.axelor.admission.db.CollegeEntry" mappedBy="admissionEntry" />
+		<integer name="statusSelect" title="Admission Status " readonly="true"
+			selection="admission.admission.entry.status.select" default="1" />
+			
+		<date name="validationDate" title="Validation Date" readonly="true" />
+		<many-to-one name="collegeSelected" title="College Selected"
+			ref="com.axelor.admission.db.College" readonly="true" />
+	</entity>
+
+</domain-models>

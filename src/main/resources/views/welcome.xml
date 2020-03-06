@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.3.xsd">
+
+  <dashboard name="welcome.dashboard" title="Welcome!">
+    <dashlet action="custom:report-tasks-today" colSpan="4"/>
+    <dashlet action="custom:report-sales-today" colSpan="4"/>
+    <dashlet action="custom:report-sales-month" colSpan="4"/>
+    <dashlet action="chart:chart.sales.per.month"/>
+    <dashlet action="chart:chart.sales.per.month.pie"/>
+    <dashlet colSpan="12" action="sale.orders"/>
+  </dashboard>
+
+  <action-view name="welcome" title="Welcome!">
+    <view type="dashboard" name="welcome.dashboard"/>
+  </action-view>
+
+  <menuitem name="menu-dashboards" order="-101"
+    title="Dashboards" icon="fa-dashboard" icon-background="blue"/>
+
+  <menuitem name="menu-welcome" parent="menu-dashboards"
+    title="Welcome!" action="welcome"/>
+
+</object-views>

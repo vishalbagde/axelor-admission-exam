@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<domain-models xmlns="http://axelor.com/xml/ns/domain-models"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://axelor.com/xml/ns/domain-models http://axelor.com/xml/ns/domain-models/domain-models_5.3.xsd">
+
+  <module name="contact" package="com.axelor.contact.db"/>
+
+  <entity name="Contact" sequential="true" cacheable="true" repository="abstract">
+    <many-to-one name="title" ref="Title"/>
+    <string name="firstName" required="true" initParam="true"/>
+    <string name="lastName" required="true" initParam="true"/>
+    <string name="fullName" namecolumn="true" search="firstName,lastName"><![CDATA[
+    if (firstName == null && lastName == null)
+      return null;
+    if (title == null)
+        return firstName + " " + lastName;
+    return title.getName() + " " + firstName + " " + lastName;
+    ]]></string>
+    <date name="dateOfBirth"/>
+    <binary name="image" title="Photo" help="Max size 4MB." image="true"/>
+    <string name="notes" large="true"/>
+
+    <string name="email"><![CDATA[
+    if (emails == null || emails.isEmpty()) return null;
+    for (Email email : emails) if (email.getPrimary() == Boolean.TRUE) return email.getEmail();
+    return emails.get(0).getEmail();
+    ]]></string>
+
+    <string name="phone"><![CDATA[
+    if (phones == null || phones.isEmpty()) return null;
+    for (Phone phone : phones) if (phone.getPrimary() == Boolean.TRUE) return phone.getPhone();
+    return phones.get(0).getPhone();
+    ]]></string>
+
+    <one-to-many name="emails" ref="Email" mappedBy="contact" />
+    <one-to-many name="phones" ref="Phone" mappedBy="contact" />
+
+    <one-to-many name="addresses" ref="Address" mappedBy="contact"/>
+    <many-to-many name="circles" ref="Circle" />
+    <many-to-one name="company" ref="Company" massUpdate="true"/>
+
+    <finder-method name="findByName" using="fullName" />
+    <finder-method name="findByEmail" using="String:email" filter="self.emails[].email = :email" />
+  </entity>
+
+</domain-models>

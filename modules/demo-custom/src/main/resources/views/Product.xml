@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.3.xsd">
+
+  <selection id="product.color.selection.custom" name="product.color.selection">
+    <option value="black">Black</option>
+    <option value="white">White</option>
+    <option value="gray">Gray</option>
+  </selection>
+
+  <form id="product-form.ext" name="product-form" title="Product"
+    model="com.axelor.sale.db.Product" extension="true">
+    <extend target="panel[@title='Overview']/panel[last()]/field[@name='category']">
+      <insert position="after">
+        <field name="color" widget="NavSelect" selection="product.color.selection" />
+      </insert>
+    </extend>
+    <extend target="panel[@title='Notes']">
+      <insert position="after">
+        <panel-stack showIf="color" itemSpan="12">
+          <panel title="Page 1" showIf="color == 'black'" />
+          <panel title="Page 2" showIf="color == 'white'" />
+          <panel title="Page 3" showIf="color == 'gray'" />
+        </panel-stack>
+      </insert>
+    </extend>
+  </form>
+
+</object-views>

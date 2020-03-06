@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.3.xsd">
+
+  <grid name="project-grid" title="Projects" model="com.axelor.project.db.Project">
+    <field name="name" />
+    <field name="parent" />
+    <field name="priority" />
+  </grid>
+
+  <form name="project-form" title="Project" model="com.axelor.project.db.Project">
+    <panel title="Overview">
+      <field name="name"/>
+      <field name="priority"/>
+      <field name="description"/>
+      <field name="parent"/>
+      <field name="members" widget="TagSelect" x-create="code,name,password"/>
+    </panel>
+    <panel-tabs>
+      <panel-related field="tasks" editable="true">
+        <field name="name" />
+        <field name="createDate" />
+        <field name="startDate" />
+        <field name="endDate" />
+        <field name="user" />
+        <field name="priority" />
+      </panel-related>
+      <panel title="Notes">
+        <field name="notes" showTitle="false" colSpan="12"/>
+      </panel>
+    </panel-tabs>
+  </form>
+
+</object-views>

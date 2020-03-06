@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<domain-models xmlns="http://axelor.com/xml/ns/domain-models"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://axelor.com/xml/ns/domain-models http://axelor.com/xml/ns/domain-models/domain-models_5.3.xsd">
+
+  <module name="project" package="com.axelor.project.db" />
+
+  <entity name="ProjectTask" table="PROJECT_TASK" cacheable="true">
+    <string name="name" title="Task Summary" required="true" />
+    <string name="notes" multiline="true"/>
+    <string name="state" selection="project.task.state.selection" />
+    <integer name="priority"/>
+    <datetime name="createDate" required="true"/>
+    <datetime name="startDate"/>
+    <datetime name="endDate"/>
+    <date name="deadlineDate"/>
+    <integer name="progress">
+    <![CDATA[
+      double result = 0.0, duration = 0.0;
+    if (workItems == null || startDate == null || endDate == null) {
+      return 0;
+    }
+    for(ProjectWork work : workItems) {
+      java.time.LocalTime time = work.getHours();
+      result += time.getHour();
+      result += time.getMinute() / 60.0;
+    }
+    duration = java.time.temporal.ChronoUnit.HOURS.between(startDate, endDate);
+
+    result = Math.min(100.0, ((result / duration) * 100));
+    return (int) Math.round(result);
+    ]]>
+    </integer>
+    <many-to-one name="project" ref="Project" />
+    <many-to-one name="user" column="user_id" ref="com.axelor.auth.db.User" required="true" />
+    <one-to-many name="workItems" ref="ProjectWork" mappedBy="task" />
+
+    <datetime name="plannedStartDate"/>
+    <decimal name="plannedDuration"/>
+    <decimal name="plannedProgress"/>
+    <many-to-one name="parentTask" ref="ProjectTask" title="Parent task" />
+    <integer name="sequence" title="Sequence" />
+    <many-to-many name="finishToStartTaskSet" ref="ProjectTask" title="Tasks to finish before start"
+      table="PROJECT_TASK_F2S"
+      column="from_task_id"
+    column2="to_task_id" />
+    <many-to-many name="startToStartTaskSet" ref="ProjectTask" title="Tasks to start before start"
+      table="PROJECT_TASK_S2S"
+      column="from_task_id"
+      column2="to_task_id" />
+    <many-to-many name="finishToFinishTaskSet" ref="ProjectTask" title="Tasks to finish before finish"
+      table="PROJECT_TASK_F2F"
+      column="from_task_id"
+      column2="to_task_id" />
+    <many-to-many name="startToFinishaskSet" ref="ProjectTask" title="Tasks to start before finish"
+      table="PROJECT_TASK_S2F"
+      column="from_task_id"
+      column2="to_task_id" />
+  </entity>
+
+</domain-models>
