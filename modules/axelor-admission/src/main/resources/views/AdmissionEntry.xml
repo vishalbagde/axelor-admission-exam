@@ -12,6 +12,7 @@
 
 	<grid name="admission-entry-grid" title="Admission Entry"
 		model="com.axelor.admission.db.AdmissionEntry">
+
 		<field name="candidate" />
 		<field name="registrationDate" />
 		<field name="merit" />
@@ -28,61 +29,52 @@
 		model="com.axelor.admission.db.AdmissionEntry" onNew="action-attrs-on-new-addmission-antry-set-date">
 
 		<panel>
-			<field name="statusSelect" widget="navSelect" colSpan="12" />
+			<field name="statusSelect" widget="nav-select" colSpan="12" />
 		</panel>
 
-		<panel name="mainPanel">
+		<panel name="mainPanel" readonlyIf="statusSelect ==3">
 			<field name="candidate" />
 			<field name="registrationDate" />
 			<field name="faculty" />
 			<field name="merit" />
+		</panel>
+		<panel name="AdmittedValidatePanel" showIf="statusSelect == 3">
 			<field name="validationDate" />
 			<field name="collegeSelected" />
 		</panel>
 
-		<panel-related field="collegeList" form-view="college-entry-form" />
+		<panel-related field="collegeList" readonlyIf="statusSelect == 3" />
 
 		<panel sidebar="true">
 			<button name="draftBtn" title="Draft" hidden="true"
-				showIf="statusSelect == 4" onClick="action-admission-method-change-status-draft,save"
+				showIf="statusSelect == 4" onClick="action-admission-attrs-change-status-draft,save"
 				css="btn-primary" />
 
 			<button name="confirmedBtn" title="Confirm" hidden="true"
-				showIf="statusSelect == 1" onClick="action-admission-method-change-status-confirmed,save"
+				showIf="statusSelect == 1" onClick="action-admission-attrs-change-status-confirmed,save"
 				css="btn-warning" />
-
-			<button name="confirmedBtn" title="Admitted" hidden="true"
-				readonly="true" showIf="statusSelect == 3" onClick="" css="btn-success" />
 
 			<button name="cancelbtn" title="Cancel" hidden="true"
 				hideIf="statusSelect == 4" readonlyIf="collegeSelected"
-				onClick="action-admission-method-change-status-cancelled" css="btn-danger" />
+				onClick="action-admission-attrs-change-status-cancelled" css="btn-danger" />
 
 		</panel>
 	</form>
-
 
 	<action-attrs name="action-attrs-on-new-addmission-entry-set-date">
 		<attribute name="value" for="registrationDate" expr="eval:__date__" />
 	</action-attrs>
 
-	<action-attrs name="action-attrs-on-new-addmission-entry-set-status">
+	<action-attrs name="action-admission-attrs-change-status-draft">
 		<attribute name="value" for="statusSelect" expr="1" />
 	</action-attrs>
 
-	<action-attrs name="action-admission-method-change-status-draft">
-		<attribute name="value" for="statusSelect" expr="1" />
-	</action-attrs>
-
-	<action-attrs name="action-admission-method-change-status-confirmed">
+	<action-attrs name="action-admission-attrs-change-status-confirmed">
 		<attribute name="value" for="statusSelect" expr="2" />
 	</action-attrs>
 
-	<action-attrs name="action-admission-method-change-status-admitted">
-		<attribute name="value" for="statusSelect" expr="3" />
-	</action-attrs>
 
-	<action-attrs name="action-admission-method-change-status-cancelled">
+	<action-attrs name="action-admission-attrs-change-status-cancelled">
 		<attribute name="value" for="statusSelect" expr="4" />
 	</action-attrs>
 

@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <object-views xmlns="http://axelor.com/xml/ns/object-views"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.2.xsd">
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.2.xsd">
 
-	<grid name="college-entry-grid" title="College"
-		model="com.axelor.admission.db.CollegeEntry" orderBy="sequence">
-		<field name="college" />
-		<field name="sequence" />
-	</grid>
+  <grid name="college-entry-grid" title="College"
+    model="com.axelor.admission.db.CollegeEntry" orderBy="sequence">
+    <field name="college" />
+    <field name="sequence" />
+  </grid>
 
-	<form name="college-entry-form" title="College Entry"
-		model="com.axelor.admission.db.CollegeEntry" onSave="action-admission-validate-check-sequence">
+  <form name="college-entry-form" title="College Entry"
+    model="com.axelor.admission.db.CollegeEntry" onSave="action-admission-validate-check-sequence">
 
-		<panel name="mainPanel">
-			<field name="college" />
-			<field name="sequence" onChange="action-admission-condition-check-sequence" />
-		</panel>
-	</form>
-
-
-	<action-condition name="action-admission-condition-check-sequence">
-		<check error="Invalida Sequence please set Valida sequnece"
-			field="sequence" if="sequence &lt; 1" />
-	</action-condition>
+    <panel name="mainPanel">
+      <field name="college" />
+      <field name="sequence" onChange="action-admission-condition-check-sequence" />
+    </panel>
+  </form>
 
 
-	<!-- <action-attrs name="action-admission-attrs-on-select-set-college"> 
-		<attribute name="domain" for="college" expr="eval: &quot; ${_parent?.faculty?.id} 
-		IN self.facultyList &quot;" /> </action-attrs> -->
+  <action-condition name="action-admission-condition-check-sequence">
+    <check error="Invalida Sequence please set Valida sequnece"
+      field="sequence" if="sequence &lt; 1" />
+  </action-condition>
+
+
+  <!-- <action-attrs name="action-admission-attrs-on-select-set-college">
+    <attribute name="domain" for="college" expr="eval: &quot; ${_parent?.faculty?.id}
+    IN self.facultyList &quot;" /> </action-attrs> -->
 
 </object-views>

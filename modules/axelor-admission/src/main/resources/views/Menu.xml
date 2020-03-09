@@ -1,51 +1,51 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <object-views xmlns="http://axelor.com/xml/ns/object-views"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.2.xsd">
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.2.xsd">
 
-	<!-- Main Menu Admission -->
-	<menuitem name="menu-admission-module" title="Axelor Admission"  />
+  <!-- Main Menu Admission -->
+  <menuitem name="menu-admission-module" title="Axelor Admission"  />
 
-	<!-- Main Menu Admission -->
-	<menuitem name="menu-admission-admission-entry" title="Admission Entry"  
-		parent="menu-admission-module" action="menu.action.admission.admission.entry" />
+  <!-- Main Menu Admission -->
+  <menuitem name="menu-admission-admission-entry" title="Admission Entry"
+    parent="menu-admission-module" action="menu.action.admission.admission.entry" />
 
-	<action-view name="menu.action.admission.admission.entry"
-		title="Admission Entry" model="com.axelor.admission.db.AdmissionEntry">
-		<view type="grid" name="admission-entry-grid" />
-		<view type="form" name="admission-entry-form" />
-	</action-view>
+  <action-view name="menu.action.admission.admission.entry"
+    title="Admission Entry" model="com.axelor.admission.db.AdmissionEntry">
+    <view type="grid" name="admission-entry-grid" />
+    <view type="form" name="admission-entry-form" />
+  </action-view>
 
-	<!-- Main Menu College -->
-	<menuitem name="menu-admission-college" title="College"
-		parent="menu-admission-module" action="menu.action.admission.college" />
+  <!-- Main Menu College -->
+  <menuitem name="menu-admission-college" title="College"
+    parent="menu-admission-module" action="menu.action.admission.college" />
 
-	<action-view name="menu.action.admission.college" title="College"
-		model="com.axelor.admission.db.College">
-		<view type="grid" name="college-grid" />
-		<view type="form" name="college-form" />
-	</action-view>
+  <action-view name="menu.action.admission.college" title="College"
+    model="com.axelor.admission.db.College">
+    <view type="grid" name="college-grid" />
+    <view type="form" name="college-form" />
+  </action-view>
 
-	<!-- Main Menu Faculty -->
-	<menuitem name="menu-admission-faculty" title="Faculty"
-		parent="menu-admission-module" action="menu.action.admission.faculty" />
+  <!-- Main Menu Faculty -->
+  <menuitem name="menu-admission-faculty" title="Faculty"
+    parent="menu-admission-module" action="menu.action.admission.faculty" />
 
-	<action-view name="menu.action.admission.faculty" title="Faculty"
-		model="com.axelor.admission.db.Faculty">
-		<view type="grid" name="faculty-grid" />
-		<view type="form" name="faculty-form" />
-	</action-view>
+  <action-view name="menu.action.admission.faculty" title="Faculty"
+    model="com.axelor.admission.db.Faculty">
+    <view type="grid" name="faculty-grid" />
+    <view type="form" name="faculty-form" />
+  </action-view>
 
 
-	<!-- Main Menu Admission Process -->
-	<menuitem name="menu-admission-admission-process" title="Admission process"
-		parent="menu-admission-module" action="menu.action.admission.admission.process" />
+  <!-- Main Menu Admission Process -->
+  <menuitem name="menu-admission-admission-process" title="Admission process"
+    parent="menu-admission-module" action="menu.action.admission.admission.process" />
 
-	<action-view name="menu.action.admission.admission.process"
-		title="Admission process" model="com.axelor.admission.db.AdmissionProcess">
-		<view type="grid" name="admission-process-grid" />
-		<view type="form" name="admission-process-form" />
-	</action-view>
+  <action-view name="menu.action.admission.admission.process"
+    title="Admission process" model="com.axelor.admission.db.AdmissionProcess">
+    <view type="grid" name="admission-process-grid" />
+    <view type="form" name="admission-process-form" />
+  </action-view>
 
 
 
